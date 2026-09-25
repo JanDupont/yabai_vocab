@@ -1,6 +1,7 @@
 # Yabai_Vocab
 
 Anki-style flashcards for the weekly vocab lists of the Japanese course ともだち (集中 2A/2B). Plain HTML/CSS/JS, no dependencies, no build step.
+It runs on GitHub Pages, can be installed on a phone's home screen, works offline, and syncs progress between devices through a secret GitHub Gist.
 
 **Live:** <https://jandupont.github.io/yabai_vocab/> · **Lessons:** L11
 
