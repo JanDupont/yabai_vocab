@@ -14,6 +14,7 @@ The user will post new `集中2AB_vocablist_Lxx.pdf` files. For each one:
 - Write `data/Lxx.js` with `registerLesson("Lxx", "Lesson xx", [...])`, then add its `<script>` tag to `index.html` before `js/srs.js`.
 - Check the total word count and the ★ count against the PDF.
 - Never change the `jp` of existing entries. Card ids are `Lxx:jp`, and progress is keyed on them.
+- Update "Lessons included" in README.md.
 - Commit and push to `main`. GitHub Pages deploys it.
 
 Data is loaded through `<script>` tags, not `fetch`, so `index.html` works from `file://`.
@@ -23,3 +24,5 @@ Data is loaded through `<script>` tags, not `fetch`, so `index.html` works from 
 - Every change to progress must go through `setCard()` / `removeCard()` / `changed()` in `js/app.js`. These set the `mod` timestamps and tombstones that the Gist sync merge (`js/sync.js`) relies on.
 - When you add a new JS or CSS file that the app needs offline, add it to `CORE` in `sw.js`. Data files are cached automatically on first load.
 - The in-app preview browser can't register service workers, so test offline mode on the deployed site.
+- Run `node tests/sync.test.js` after changing `js/sync.js`.
+- This repo is public. Never commit tokens, Gist IDs or progress exports. Keep README.md up to date: it's the project's memory.
