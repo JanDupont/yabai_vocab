@@ -177,6 +177,7 @@
   // ---------- views ----------
 
   function show(view) {
+    if (view !== "study" && !$("#view-study").hidden) Sync.flush(); // session over: upload now
     for (const v of ["home", "study", "words"]) $(`#view-${v}`).hidden = v !== view;
     $$(".tab").forEach((t) => t.classList.toggle("active", t.dataset.nav === (view === "study" ? "home" : view)));
     clearTimeout(session.timer);
@@ -363,6 +364,7 @@
       $("#done-again").onclick = () => startStudy("practice");
       return;
     }
+    Sync.flush();
     const q = buildQueue();
     const more = q.newLeft === 0 && q.freshTotal > 0
       ? `<p class="hint">You've reached today's limit of ${store.settings.newPerDay} new cards (change it in settings).</p>` : "";
@@ -746,7 +748,7 @@
       off: "Not connected. Progress is only stored on this device.",
       ok: `Synced ${ago}.`,
       syncing: "Syncing…",
-      pending: "Changes waiting to sync…",
+      pending: "New answers will sync at the end of the session.",
       offline: st.message,
       error: st.message,
     }[st.state] || "";

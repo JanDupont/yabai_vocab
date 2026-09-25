@@ -3,23 +3,30 @@
 // The Gist holds one JSON file with { cards, deleted, settings, settingsMod }.
 // Merging is per card: the version with the newest `mod` timestamp wins, and
 // `deleted` holds tombstones (id -> time) so undo/reset also propagate.
+//
+// To keep requests low, changes are uploaded in batches (at most every
+// PUSH_INTERVAL, and right away via flush() when a session ends or the app is
+// left), and downloads are conditional (ETag), so "nothing changed" is a cheap 304.
 const Sync = (() => {
   const META_KEY = "yabai_vocab.sync";
   const FILE = "yabai_vocab_progress.json";
   const API = "https://api.github.com";
-  const PUSH_DELAY = 2000;
+  const PUSH_INTERVAL = 60 * 1000; // upload at most this often while studying
+  const PULL_INTERVAL = 30 * 1000; // re-check at most this often when the app comes back
   const TOMBSTONE_TTL = 90 * 24 * 60 * 60 * 1000;
+
+  const EMPTY_META = { token: "", gistId: "", etag: "", dirty: false, lastSync: 0 };
 
   let hooks = { getData: null, applyRemote: null, onStatus: () => {} };
   let meta = loadMeta();
-  let syncing = false, again = false, pushTimer = null, changeCount = 0;
+  let syncing = false, again = false, pushTimer = null, changeCount = 0, lastPull = 0;
   let state = "off", message = "";
 
   function loadMeta() {
     try {
-      return { token: "", gistId: "", dirty: false, lastSync: 0, ...JSON.parse(localStorage.getItem(META_KEY)) };
+      return { ...EMPTY_META, ...JSON.parse(localStorage.getItem(META_KEY)) };
     } catch (e) {
-      return { token: "", gistId: "", dirty: false, lastSync: 0 };
+      return { ...EMPTY_META };
     }
   }
 
@@ -76,7 +83,7 @@ const Sync = (() => {
 
   // ---------- GitHub API ----------
 
-  async function api(path, opts = {}, token = meta.token) {
+  async function request(path, opts = {}, token = meta.token, headers = {}) {
     const res = await fetch(API + path, {
       ...opts,
       cache: "no-store",
@@ -84,18 +91,32 @@ const Sync = (() => {
         Accept: "application/vnd.github+json",
         Authorization: `Bearer ${token}`,
         ...(opts.body ? { "Content-Type": "application/json" } : {}),
+        ...headers,
       },
     });
+    if (res.status === 304) return res;
     if (res.status === 401) throw new SyncError("GitHub rejected the token. Check that it was copied completely, has the gist permission and hasn't expired.");
     if (res.status === 404) throw new SyncError("Sync file not found on GitHub. Disconnect and connect again.");
     if (!res.ok) throw new SyncError(`GitHub error ${res.status}`);
-    return res.json();
+    return res;
+  }
+
+  async function api(path, opts, token) {
+    return (await request(path, opts, token)).json();
   }
 
   class SyncError extends Error {}
 
+  // Returns the remote data, or UNCHANGED when the Gist is still the version we
+  // last saw (304 responses don't count against GitHub's rate limit).
+  const UNCHANGED = Symbol("unchanged");
+
   async function pull() {
-    const gist = await api(`/gists/${meta.gistId}`);
+    const res = await request(`/gists/${meta.gistId}`, {}, meta.token, meta.etag ? { "If-None-Match": meta.etag } : {});
+    lastPull = Date.now();
+    if (res.status === 304) return UNCHANGED;
+    meta.etag = res.headers.get("ETag") || "";
+    const gist = await res.json();
     const file = gist.files?.[FILE];
     if (!file) return null;
     let text = file.content;
@@ -103,12 +124,14 @@ const Sync = (() => {
     try { return JSON.parse(text); } catch (e) { return null; }
   }
 
-  function push(data) {
+  async function push(data) {
     const payload = { app: "Yabai_Vocab", version: 1, updated: new Date().toISOString(), ...data };
-    return api(`/gists/${meta.gistId}`, {
+    const res = await request(`/gists/${meta.gistId}`, {
       method: "PATCH",
       body: JSON.stringify({ files: { [FILE]: { content: JSON.stringify(payload) } } }),
     });
+    // If this tag doesn't match what a later GET returns, that GET is simply a full download.
+    meta.etag = res.headers.get("ETag") || "";
   }
 
   // ---------- public ----------
@@ -117,12 +140,23 @@ const Sync = (() => {
     hooks = { ...hooks, ...h };
     setStatus(isConnected() ? (meta.dirty ? "pending" : "ok") : "off");
     if (isConnected()) sync();
-    window.addEventListener("online", () => isConnected() && sync());
+    window.addEventListener("online", check);
+    window.addEventListener("pagehide", flush);
     document.addEventListener("visibilitychange", () => {
-      if (!isConnected()) return;
-      // pull when coming back to the app, push right away when leaving it
-      if (document.visibilityState === "visible" || meta.dirty) sync();
+      // upload right away when leaving the app, check for changes when coming back
+      if (document.visibilityState === "hidden") flush();
+      else check();
     });
+  }
+
+  // Upload pending changes now (session finished, app left, ...).
+  function flush() {
+    return isConnected() && meta.dirty ? sync() : Promise.resolve();
+  }
+
+  // Look for changes from other devices, but not more often than PULL_INTERVAL.
+  function check() {
+    return isConnected() && (meta.dirty || Date.now() - lastPull > PULL_INTERVAL) ? sync() : Promise.resolve();
   }
 
   // Call after every local change.
@@ -132,23 +166,29 @@ const Sync = (() => {
     meta.dirty = true;
     saveMeta();
     if (state !== "syncing") setStatus("pending");
-    clearTimeout(pushTimer);
-    pushTimer = setTimeout(sync, PUSH_DELAY);
+    // Not reset on every change: the first unsynced change starts the clock.
+    if (!pushTimer) pushTimer = setTimeout(sync, PUSH_INTERVAL);
   }
 
   async function sync() {
     if (!isConnected()) return;
     if (syncing) { again = true; return; }
     clearTimeout(pushTimer);
+    pushTimer = null;
     syncing = true;
     setStatus("syncing");
     const startCount = changeCount;
     try {
       const remote = await pull();
       const local = syncable(hooks.getData());
-      const merged = remote ? merge(local, syncable(remote)) : local;
-      if (canon(merged) !== canon(local)) hooks.applyRemote(merged);
-      if (!remote || canon(merged) !== canon(syncable(remote))) await push(merged);
+      if (remote === UNCHANGED) {
+        // Nothing new from other devices; local data already includes the remote version.
+        if (meta.dirty) await push(local);
+      } else {
+        const merged = remote ? merge(local, syncable(remote)) : local;
+        if (canon(merged) !== canon(local)) hooks.applyRemote(merged);
+        if (!remote || canon(merged) !== canon(syncable(remote))) await push(merged);
+      }
       if (changeCount === startCount) meta.dirty = false;
       meta.lastSync = Date.now();
       saveMeta();
@@ -181,7 +221,7 @@ const Sync = (() => {
           }),
         }, token);
       }
-      meta = { token, gistId: gist.id, dirty: false, lastSync: 0 };
+      meta = { ...EMPTY_META, token, gistId: gist.id };
       saveMeta();
       await sync();
     } catch (e) {
@@ -191,7 +231,7 @@ const Sync = (() => {
   }
 
   function disconnect() {
-    meta = { token: "", gistId: "", dirty: false, lastSync: 0 };
+    meta = { ...EMPTY_META };
     saveMeta();
     setStatus("off");
   }
@@ -200,5 +240,5 @@ const Sync = (() => {
     return meta.gistId ? `https://gist.github.com/${meta.gistId}` : "";
   }
 
-  return { init, changed, sync, connect, disconnect, status, gistUrl, merge };
+  return { init, changed, sync, flush, connect, disconnect, status, gistUrl, merge };
 })();

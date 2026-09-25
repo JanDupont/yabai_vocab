@@ -366,14 +366,15 @@ dialog::backdrop { background: rgba(20, 20, 30, .35); backdrop-filter: blur(2px)
   background: var(--good); border: 2px solid var(--bg);
 }
 .sync-indicator[data-state="syncing"] .sync-dot { background: var(--accent); animation: pulse 1s ease-in-out infinite; }
-.sync-indicator[data-state="pending"] .sync-dot,
+.sync-indicator[data-state="pending"] .sync-dot { background: var(--muted); }
 .sync-indicator[data-state="offline"] .sync-dot { background: var(--hard); }
 .sync-indicator[data-state="error"] .sync-dot { background: var(--again); }
 @keyframes pulse { 50% { opacity: .3; } }
 .sync-status { margin: 0 0 10px; font-size: 14px; font-weight: 600; }
 .sync-status[data-state="ok"] { color: var(--good); }
 .sync-status[data-state="error"] { color: var(--again); }
-.sync-status[data-state="offline"], .sync-status[data-state="pending"] { color: var(--hard); }
+.sync-status[data-state="offline"] { color: var(--hard); }
+.sync-status[data-state="pending"] { color: var(--muted); }
 .sync-status:empty { display: none; }
 .sync-row { display: flex; gap: 8px; }
 .sync-row input {

@@ -15,6 +15,7 @@ It runs on GitHub Pages, can be installed on a phone's home screen, works offlin
 - **Sync** (`js/sync.js`): progress is stored in a secret Gist, in the file `yabai_vocab_progress.json`.
   - Each device connects with a classic GitHub token that has only the `gist` scope, entered in Settings. Create one [here](https://github.com/settings/tokens/new?scopes=gist&description=Yabai_Vocab%20sync).
   - Merging is per card: the newest `mod` wins, and undo/reset leave tombstones in `deleted`.
+  - To keep requests low, changes are uploaded in batches: at most every 60 s, plus when a session ends or the app is left. Downloads are conditional (ETag), so a check where nothing changed is a cheap 304.
   - All progress changes must go through `setCard()` / `removeCard()` / `changed()` in `js/app.js`.
 - **Offline** (`sw.js`): network first, cache as fallback. When you add a new JS/CSS file, add it to `CORE`.
 
