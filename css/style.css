@@ -52,6 +52,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 button { font: inherit; color: inherit; }
+.settings-form h2:focus { outline: none; }
 [hidden] { display: none !important; }
 
 kbd {
@@ -392,6 +393,8 @@ a.btn { text-decoration: none; color: inherit; }
 
 /* ---------- small screens ---------- */
 @media (max-width: 560px) {
+  /* iOS zooms into inputs with text smaller than 16px when they get focus */
+  input, select, textarea, .setting input[type="number"] { font-size: 16px !important; }
   .topbar { padding: max(12px, env(safe-area-inset-top)) 16px 12px; }
   .brand-text { display: none; }
   .panel { padding: 16px; }

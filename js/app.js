@@ -132,6 +132,7 @@
       review,
       fresh: available.slice(0, newLeft),
       freshTotal: fresh.length,
+      locked: fresh.length - available.length, // EN → 日本語 cards waiting for tomorrow
       newLeft,
     };
   }
@@ -225,9 +226,14 @@
     } else if (q.newLeft === 0 && q.freshTotal > 0) {
       hint = `Daily limit of new cards reached (${store.settings.newPerDay}). ${q.freshTotal} new cards remaining.`;
     }
+    if (q.locked) hint += (hint ? " " : "") + lockedText(q.locked);
     $("#home-hint").textContent = hint;
 
     renderProgress();
+  }
+
+  function lockedText(n) {
+    return `${n} EN → 日本語 card${n > 1 ? "s" : ""} will be added tomorrow, the day after you learned the 日本語 → EN side.`;
   }
 
   function nextDueText(q) {
@@ -360,11 +366,12 @@
     const q = buildQueue();
     const more = q.newLeft === 0 && q.freshTotal > 0
       ? `<p class="hint">You've reached today's limit of ${store.settings.newPerDay} new cards (change it in settings).</p>` : "";
+    const locked = q.locked ? `<p class="hint">${esc(lockedText(q.locked))}</p>` : "";
     el.innerHTML = `
       <div class="done-icon">✓</div>
       <h2>お疲れさまでした！</h2>
       <p>You're done for now. ${esc(nextDueText(q))}</p>
-      ${more}
+      ${more}${locked}
       <div class="actions center">
         <button class="btn btn-ghost" id="done-practice">Extra practice</button>
         <button class="btn btn-primary" data-nav="home">Back home</button>
