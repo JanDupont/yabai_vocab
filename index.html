@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Yabai_Vocab</title>
+  <meta name="description" content="Spaced-repetition flashcards for Japanese vocabulary">
+  <meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16171c" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Yabai_Vocab">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%233b4a8c'/><text x='50' y='70' font-size='58' text-anchor='middle' fill='white' font-family='sans-serif'>語</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="brand" data-nav="home" title="Home">
+      <span class="brand-mark">語</span>
+      <span class="brand-text">Yabai_Vocab</span>
+    </button>
+    <nav class="tabs">
+      <button data-nav="home" class="tab">Study</button>
+      <button data-nav="words" class="tab">Words</button>
+      <button id="sync-indicator" class="icon-btn sync-indicator" aria-label="Sync status" hidden>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 1 0-1.3-8.8A6 6 0 0 0 4.5 12.5 3.5 3.5 0 0 0 7 19h10.5z"/></svg>
+        <i class="sync-dot"></i>
+      </button>
+      <button id="open-settings" class="icon-btn" title="Settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Home / deck overview -->
+    <section id="view-home" class="view">
+      <div class="panel counts-panel">
+        <div class="count count-new"><span id="c-new">0</span><label>New</label></div>
+        <div class="count count-learn"><span id="c-learn">0</span><label>Learning</label></div>
+        <div class="count count-review"><span id="c-review">0</span><label>Review</label></div>
+      </div>
+
+      <div class="panel">
+        <div class="field">
+          <div class="field-label">Lessons</div>
+          <div id="lesson-chips" class="chips"></div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <div class="field-label">Direction</div>
+            <div class="segmented" id="dir-seg">
+              <button data-dir="je">日本語 → EN</button>
+              <button data-dir="ej">EN → 日本語</button>
+              <button data-dir="both">Both</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-label">Filter</div>
+            <label class="toggle">
+              <input type="checkbox" id="star-only">
+              <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              <span><span class="star">★</span> only</span>
+            </label>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="btn-study" class="btn btn-primary btn-lg">Study now</button>
+          <button id="btn-practice" class="btn btn-ghost" title="Extra round with your weakest cards — does not change the schedule">Extra practice</button>
+        </div>
+        <p id="home-hint" class="hint"></p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Progress</div>
+        <div id="lesson-progress"></div>
+        <div class="legend">
+          <span><i class="dot st-new"></i>New</span>
+          <span><i class="dot st-learning"></i>Learning</span>
+          <span><i class="dot st-young"></i>Young (&lt;21d)</span>
+          <span><i class="dot st-mature"></i>Mature</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Study session -->
+    <section id="view-study" class="view" hidden>
+      <div class="study-bar">
+        <button class="btn btn-ghost btn-sm" data-nav="home">← Back</button>
+        <div id="study-counts" class="mini-counts"></div>
+        <button id="btn-undo" class="btn btn-ghost btn-sm" title="Undo last answer (Z)" disabled>Undo</button>
+      </div>
+
+      <div id="card-area">
+        <div class="card-scene">
+          <div id="card" class="card" tabindex="0">
+            <div class="face front" id="card-front"></div>
+            <div class="face back" id="card-back"></div>
+          </div>
+        </div>
+
+        <div class="answer-bar">
+          <button id="btn-flip" class="btn btn-primary btn-lg btn-wide">Show answer <kbd>Space</kbd></button>
+          <div id="rate-buttons" class="rate-buttons" hidden>
+            <button class="rate again" data-rate="again"><span class="rate-ivl"></span><span>Again</span><kbd>1</kbd></button>
+            <button class="rate hard"  data-rate="hard"><span class="rate-ivl"></span><span>Hard</span><kbd>2</kbd></button>
+            <button class="rate good"  data-rate="good"><span class="rate-ivl"></span><span>Good</span><kbd>3</kbd></button>
+            <button class="rate easy"  data-rate="easy"><span class="rate-ivl"></span><span>Easy</span><kbd>4</kbd></button>
+          </div>
+        </div>
+      </div>
+
+      <div id="done" class="panel done" hidden></div>
+    </section>
+
+    <!-- Word list -->
+    <section id="view-words" class="view" hidden>
+      <div class="panel words-toolbar">
+        <input id="word-search" type="search" placeholder="Search 日本語, romaji or English…">
+        <select id="word-lesson"></select>
+        <label class="toggle">
+          <input type="checkbox" id="word-star">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span><span class="star">★</span> only</span>
+        </label>
+      </div>
+      <div class="panel table-panel">
+        <table class="words">
+          <thead>
+            <tr><th></th><th>日本語</th><th>Romaji</th><th>English</th><th class="st-col" title="日本語 → English">JP→EN</th><th class="st-col" title="English → 日本語">EN→JP</th></tr>
+          </thead>
+          <tbody id="word-rows"></tbody>
+        </table>
+        <p id="word-count" class="hint"></p>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="settings">
+    <form method="dialog" class="settings-form">
+      <h2>Settings</h2>
+      <label class="setting">
+        <span>New cards per day</span>
+        <input type="number" id="set-new" min="0" max="500" step="5">
+      </label>
+      <label class="setting">
+        <span>Show reading (かな) on the front of 日本語 cards</span>
+        <input type="checkbox" id="set-furigana">
+      </label>
+      <label class="setting">
+        <span>Show romaji on the front of 日本語 cards</span>
+        <input type="checkbox" id="set-romaji">
+      </label>
+      <label class="setting">
+        <span>Speak Japanese automatically when the answer is shown</span>
+        <input type="checkbox" id="set-speak">
+      </label>
+      <div class="settings-group">
+        <div class="field-label">Sync between devices</div>
+        <p id="sync-status" class="sync-status"></p>
+        <div id="sync-setup">
+          <p class="hint">Paste a GitHub token that only has the <b>gist</b> permission.
+            <a href="https://github.com/settings/tokens/new?scopes=gist&amp;description=Yabai_Vocab%20sync" target="_blank" rel="noopener">Create one here</a>.
+            Use the same token on every device.</p>
+          <div class="sync-row">
+            <input type="password" id="sync-token" placeholder="ghp_…" autocomplete="off" spellcheck="false">
+            <button type="button" id="btn-sync-connect" class="btn btn-primary btn-sm">Connect</button>
+          </div>
+        </div>
+        <div id="sync-connected" class="actions" hidden>
+          <button type="button" id="btn-sync-now" class="btn btn-ghost btn-sm">Sync now</button>
+          <a id="sync-gist" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">View data on GitHub</a>
+          <button type="button" id="btn-sync-disconnect" class="btn btn-danger btn-sm">Disconnect</button>
+        </div>
+      </div>
+      <div class="settings-group">
+        <div class="field-label">Progress backup</div>
+        <p class="hint">Save a copy of your progress as a file, or restore one.</p>
+        <div class="actions">
+          <button type="button" id="btn-export" class="btn btn-ghost btn-sm">Export</button>
+          <button type="button" id="btn-import" class="btn btn-ghost btn-sm">Import</button>
+          <button type="button" id="btn-reset" class="btn btn-danger btn-sm">Reset progress</button>
+          <input type="file" id="import-file" accept="application/json" hidden>
+        </div>
+      </div>
+      <div class="settings-group">
+        <div class="field-label">Keyboard</div>
+        <p class="hint"><kbd>Space</kbd> flip, then Good · <kbd>1</kbd>–<kbd>4</kbd> Again / Hard / Good / Easy · <kbd>Z</kbd> undo · <kbd>S</kbd> speak · <kbd>Esc</kbd> back</p>
+      </div>
+      <div class="actions end">
+        <button class="btn btn-primary">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="js/registry.js"></script>
+  <!-- Vocabulary lists: add one line per lesson -->
+  <script src="data/L11.js"></script>
+  <script src="js/srs.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
