@@ -132,7 +132,17 @@ const Draw = (() => {
       if (state.run >= HINT_AFTER) hint();
     }
     svg.addEventListener("pointerup", end);
-    svg.addEventListener("pointercancel", end);
+    // The browser took the gesture over (scroll, zoom): drop the stroke instead of judging a stub.
+    svg.addEventListener("pointercancel", (e) => {
+      if (!cur || e.pointerId !== cur.id) return;
+      cur.line.remove();
+      cur = null;
+    });
+    // iOS Safari doesn't reliably honour touch-action on SVG, so a vertical stroke would scroll
+    // the page and cancel the pointer. Blocking the touch events themselves always works.
+    for (const type of ["touchstart", "touchmove"]) {
+      svg.addEventListener(type, (e) => e.preventDefault(), { passive: false });
+    }
 
     // Replace the drawn stroke with the model stroke, with a short morph in between.
     function snap(pts, line) {

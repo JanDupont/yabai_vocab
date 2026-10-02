@@ -296,6 +296,7 @@ i.st-mature, .dot.st-mature { background: var(--st-mature); }
 .ex-en { color: var(--muted); font-style: italic; }
 
 /* drawing pad (js/draw.js) */
+#pad { touch-action: none; }
 .pad-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 14px; cursor: default; }
 .pad {
   display: block; width: min(250px, 62vw); aspect-ratio: 1;
