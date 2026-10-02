@@ -17,6 +17,15 @@ The user will post new `集中2AB_vocablist_Lxx.pdf` files. For each one:
 - Update "Lessons included" in README.md.
 - Commit and push to `main`. GitHub Pages deploys it.
 
+## Adding a kanji list
+
+The user posts photos of the kanji sheets. The margin label (for example `10-2`) sits next to the first kanji of that list. For each list:
+
+- Write `data/Kxx-y.js` with `registerKanji("Lxx-y", "Kanji xx-y", [...])`, in the format of `data/K10-1.js`: `k`, `en`, `kun`, `on`, and `ex` (the example words under the practice boxes). Ignore handwritten notes.
+- Run `node tools/kanjivg.js`, and check each stroke count it prints against the sheet.
+- Add the `<script>` tag to `index.html` before `data/kanjivg.js`, and update "Kanji" in README.md.
+- Never change the `k` of existing entries. Card ids are `K:<kanji>`.
+
 Data is loaded through `<script>` tags, not `fetch`, so `index.html` works from `file://`.
 
 ## Things to keep working
