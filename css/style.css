@@ -281,6 +281,45 @@ i.st-mature, .dot.st-mature { background: var(--st-mature); }
 }
 .speak:hover { color: var(--accent); border-color: var(--accent); }
 
+/* kanji cards */
+.kanji-big { font-family: var(--font-jp); font-size: clamp(84px, 24vw, 132px); line-height: 1.15; font-weight: 500; }
+.readings { display: grid; gap: 4px; margin-top: 8px; font-family: var(--font-jp); font-size: 18px; text-align: left; }
+.readings > div { display: flex; gap: 10px; align-items: baseline; }
+.rd-label {
+  flex: none; width: 40px; text-align: center; font-family: var(--font); font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 1px 0;
+}
+.examples { list-style: none; margin: 14px 0 0; padding: 12px 0 0; border-top: 1px solid var(--border); display: grid; gap: 5px; text-align: left; font-size: 14px; }
+.examples li { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; }
+.ex-jp { font-family: var(--font-jp); font-size: 17px; font-weight: 500; }
+.ex-kana { color: var(--muted); }
+.ex-en { color: var(--muted); font-style: italic; }
+
+/* drawing pad (js/draw.js) */
+.pad-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 14px; cursor: default; }
+.pad {
+  display: block; width: min(250px, 62vw); aspect-ratio: 1;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: crosshair;
+}
+.pad path, .pad polyline { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 3.6; }
+.pad .pad-guide { stroke: var(--border); stroke-width: .6; stroke-dasharray: 2 2.5; }
+.pad-done path { stroke: var(--text); }
+.pad-user polyline { stroke: var(--accent); }
+.pad-user polyline.bad { stroke: var(--again); opacity: 0; transition: opacity .4s; }
+.pad .pad-hint { stroke: var(--accent); animation: pad-hint 1.2s ease-out forwards; }
+@keyframes pad-hint { 0%, 55% { opacity: .55; } 100% { opacity: 0; } }
+.pad.diagram { width: min(150px, 40vw); cursor: default; touch-action: auto; margin-bottom: 8px; }
+.pad.diagram.compare .pad-done path { stroke: var(--muted); opacity: .45; }
+.pad-numbers text { font-size: 6.5px; font-weight: 700; fill: var(--again); font-family: var(--font); }
+.pad-tools { display: flex; gap: 8px; }
+.pad-msg { min-height: 20px; font-size: 13px; font-weight: 600; color: var(--muted); }
+#pad-msg { color: var(--hard); }
+.seg-count {
+  display: inline-block; min-width: 18px; margin-left: 4px; padding: 0 5px; border-radius: 99px;
+  font-size: 11px; background: var(--accent-soft); color: var(--accent);
+}
+
 .answer-bar { min-height: 70px; }
 .rate-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 .rate {
@@ -334,6 +373,9 @@ table.words { width: 100%; border-collapse: collapse; font-size: 14px; }
 .jp-cell .kana { font-size: 12.5px; color: var(--muted); display: block; }
 .jp-cell .note { display: inline-block; white-space: nowrap; font-size: 11.5px; padding: 1px 8px; margin-top: 3px; }
 .ro-cell { color: var(--accent); font-style: italic; }
+.jp-cell .kanji-cell { font-size: 30px; line-height: 1.2; }
+.rd-cell { font-family: var(--font-jp); white-space: nowrap; }
+.ex-line { display: block; font-family: var(--font-jp); font-size: 12.5px; color: var(--muted); }
 .st-col { text-align: center; white-space: nowrap; padding-right: 12px !important; }
 .pill.st-new { color: var(--st-new); background: color-mix(in srgb, var(--st-new) 12%, transparent); }
 .pill.st-learning { color: var(--st-learning); background: color-mix(in srgb, var(--st-learning) 12%, transparent); }
@@ -406,5 +448,5 @@ a.btn { text-decoration: none; color: inherit; }
   .progress-row { grid-template-columns: 1fr; }
   .progress-label { grid-row: auto; flex-direction: row; gap: 8px; align-items: baseline; }
   .segmented button { padding: 7px 10px; font-size: 13px; }
-  .words th:nth-child(3), .words td:nth-child(3) { display: none; }
+  .words:not(.kanji) th:nth-child(3), .words:not(.kanji) td:nth-child(3) { display: none; }
 }

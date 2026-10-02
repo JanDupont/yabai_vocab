@@ -46,19 +46,22 @@
 
       <div class="panel">
         <div class="field">
+          <div class="field-label">Deck</div>
+          <div class="segmented">
+            <button data-deck="vocab" data-label="Vocab">Vocab</button>
+            <button data-deck="kanji" data-label="Kanji">Kanji</button>
+          </div>
+        </div>
+        <div class="field">
           <div class="field-label">Lessons</div>
           <div id="lesson-chips" class="chips"></div>
         </div>
         <div class="field-row">
           <div class="field">
             <div class="field-label">Direction</div>
-            <div class="segmented" id="dir-seg">
-              <button data-dir="je">日本語 → EN</button>
-              <button data-dir="ej">EN → 日本語</button>
-              <button data-dir="both">Both</button>
-            </div>
+            <div class="segmented" id="dir-seg"></div>
           </div>
-          <div class="field">
+          <div class="field" id="star-field">
             <div class="field-label">Filter</div>
             <label class="toggle">
               <input type="checkbox" id="star-only">
@@ -119,19 +122,21 @@
     <!-- Word list -->
     <section id="view-words" class="view" hidden>
       <div class="panel words-toolbar">
+        <div class="segmented">
+          <button data-deck="vocab" data-label="Vocab">Vocab</button>
+          <button data-deck="kanji" data-label="Kanji">Kanji</button>
+        </div>
         <input id="word-search" type="search" placeholder="Search 日本語, romaji or English…">
         <select id="word-lesson"></select>
-        <label class="toggle">
+        <label class="toggle" id="word-star-toggle">
           <input type="checkbox" id="word-star">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
           <span><span class="star">★</span> only</span>
         </label>
       </div>
       <div class="panel table-panel">
-        <table class="words">
-          <thead>
-            <tr><th></th><th>日本語</th><th>Romaji</th><th>English</th><th class="st-col" title="日本語 → English">JP→EN</th><th class="st-col" title="English → 日本語">EN→JP</th></tr>
-          </thead>
+        <table class="words" id="words-table">
+          <thead id="word-head"></thead>
           <tbody id="word-rows"></tbody>
         </table>
         <p id="word-count" class="hint"></p>
@@ -157,6 +162,10 @@
       <label class="setting">
         <span>Speak Japanese automatically when the answer is shown</span>
         <input type="checkbox" id="set-speak">
+      </label>
+      <label class="setting">
+        <span>Check each stroke while drawing kanji (off: free drawing, you compare it yourself)</span>
+        <input type="checkbox" id="set-strokes">
       </label>
       <div class="settings-group">
         <div class="field-label">Sync between devices</div>
@@ -201,8 +210,14 @@
   <script src="js/registry.js"></script>
   <!-- Vocabulary lists: add one line per lesson -->
   <script src="data/L11.js"></script>
+  <!-- Kanji lists: add one line per list; stroke data comes from tools/kanjivg.js -->
+  <script src="data/K10-1.js"></script>
+  <script src="data/K10-2.js"></script>
+  <script src="data/K11-1.js"></script>
+  <script src="data/kanjivg.js"></script>
   <script src="js/srs.js"></script>
   <script src="js/sync.js"></script>
+  <script src="js/draw.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

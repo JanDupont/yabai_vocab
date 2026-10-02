@@ -8,6 +8,7 @@ const CORE = [
   "js/registry.js",
   "js/srs.js",
   "js/sync.js",
+  "js/draw.js",
   "js/app.js",
   "manifest.webmanifest",
   "icons/icon-192.png",
