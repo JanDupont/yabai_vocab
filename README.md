@@ -3,7 +3,7 @@
 Anki-style flashcards for the weekly vocab and kanji lists of the Japanese course ともだち (集中 2A/2B). Plain HTML/CSS/JS, no dependencies, no build step.
 It runs on GitHub Pages, can be installed on a phone's home screen, works offline, and syncs progress between devices through a secret GitHub Gist.
 
-**Live:** <https://jandupont.github.io/yabai_vocab/> · **Lessons:** L11 · **Kanji:** L10-1, L10-2, L11-1
+**Live:** <https://jandupont.github.io/yabai_vocab/> · **Lessons:** L11 · **Kanji:** L10-1, L10-2, L11-1, L11-2
 
 ## How it works
 
@@ -30,7 +30,7 @@ Add `data/L12.js` in the same format as `data/L11.js`, add its `<script>` tag in
 
 ## Adding a kanji list
 
-Add `data/K11-2.js` in the same format as `data/K10-1.js`, run `node tools/kanjivg.js`, add its `<script>` tag in `index.html` before `data/kanjivg.js`, update "Kanji" above, and push to `main`.
+Add `data/K11-3.js` in the same format as `data/K10-1.js`, run `node tools/kanjivg.js`, add its `<script>` tag in `index.html` before `data/kanjivg.js`, update "Kanji" above, and push to `main`.
 
 ## Development
 
