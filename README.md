@@ -10,7 +10,7 @@ It runs on GitHub Pages, can be installed on a phone's home screen, works offlin
 - **Scheduling** (`js/srs.js`): a simplified SM-2 (Again/Hard/Good/Easy).
   - Each word has two cards, one per direction.
   - A day starts at 04:00, and intervals are capped at 180 days.
-  - In "Both" mode, a new word's EN → 日本語 card starts the day after its 日本語 → EN card.
+  - In "Both" mode, a new word's EN → 日本語 card starts the day after its 日本語 → EN card. Kanji are not delayed: the Write card is available right after the Recognise card.
 - **Data:** each lesson is a file `data/Lxx.js`, loaded with a `<script>` tag. Card ids are `Lxx:<jp>>je` / `>ej`, so changing a word's `jp` resets its progress.
 - **Kanji deck:** the home screen switches between the Vocab and the Kanji deck. Each deck has its own daily limit of new cards.
   - Each kanji list is a file `data/Kxx-y.js`. Each kanji has two cards: Recognise (kanji → meaning, KUN, ON) and Write (meaning and readings → draw it). The example words are only shown on the answer side.

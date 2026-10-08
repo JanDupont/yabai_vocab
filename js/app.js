@@ -131,9 +131,10 @@
       else if (s.step >= 0) learn.push(c);
       else if (s.due <= now) review.push(c);
     }
-    // With both directions, a new word is first learned 日本語 → EN (a kanji: recognise);
-    // the reverse card is introduced from the next day on.
+    // With both directions, a new word is first learned 日本語 → EN; the reverse card is
+    // introduced from the next day on. Kanji have both cards (recognise, write) from the start.
     const available = fresh.filter((c) => {
+      if (filter.deck === "kanji") return true;
       if (filter[DECKS[filter.deck].dirKey] !== "both" || FIRST_DIR[c.dir] === c.dir) return true;
       const sib = store.cards[`${c.word.id}>${FIRST_DIR[c.dir]}`];
       return sib && SRS.dayIndex(sib.first || 0) < t;
@@ -258,8 +259,7 @@
   }
 
   function lockedText(n) {
-    const [first, second] = store.filter.deck === "kanji" ? ["Recognise", "Write"] : ["日本語 → EN", "EN → 日本語"];
-    return `${n} ${second} card${n > 1 ? "s" : ""} will be added tomorrow, the day after you learned the ${first} side.`;
+    return `${n} EN → 日本語 card${n > 1 ? "s" : ""} will be added tomorrow, the day after you learned the 日本語 → EN side.`;
   }
 
   // Deck switch (home and word list), with the number of cards waiting in each deck.
