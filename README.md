@@ -3,7 +3,7 @@
 Anki-style flashcards for the weekly vocab and kanji lists of the Japanese course ともだち (集中 2A/2B). Plain HTML/CSS/JS, no dependencies, no build step.
 It runs on GitHub Pages, can be installed on a phone's home screen, works offline, and syncs progress between devices through a secret GitHub Gist.
 
-**Live:** <https://jandupont.github.io/yabai_vocab/> · **Lessons:** L11, L14 · **Kanji:** L10-1, L10-2, L11-1, L11-2
+**Live:** <https://jandupont.github.io/yabai_vocab/> · **Lessons:** L11, L14 · **Kanji:** L10-1, L10-2, L11-1, L11-2, L13-1, L13-2
 
 ## How it works
 
