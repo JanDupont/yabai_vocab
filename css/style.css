@@ -45,6 +45,8 @@
   --radius: 28px;
   --font: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", ui-rounded, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
   --font-jp: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, sans-serif;
+  /* the large Japanese on study cards: the plain system face, whose kanji shapes are easier to learn from */
+  --font-card: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, sans-serif;
   color-scheme: light;
 }
 
@@ -319,7 +321,7 @@ i.st-mature, .dot.st-mature { background: var(--st-mature); }
 }
 .jp-block { display: flex; flex-direction: column; align-items: center; }
 .jp-block .kana { font-size: 18px; color: var(--muted); letter-spacing: .08em; }
-.jp-block .jp { font-family: var(--font-jp); font-size: clamp(38px, 9vw, 60px); line-height: 1.25; font-weight: 500; letter-spacing: .03em; word-break: keep-all; overflow-wrap: anywhere; }
+.jp-block .jp { font-family: var(--font-card); font-size: clamp(38px, 9vw, 60px); line-height: 1.25; font-weight: 500; letter-spacing: .03em; word-break: keep-all; overflow-wrap: anywhere; }
 .jp-block .romaji { font-size: 16px; color: var(--accent-text); font-style: italic; margin-top: 4px; letter-spacing: .02em; }
 .note { font-size: 14px; color: var(--muted); background: var(--surface-2); padding: 3px 12px; border-radius: 8px; margin-top: 8px; }
 .note::before { content: "例 "; color: var(--accent-text); font-weight: 700; }
@@ -335,7 +337,7 @@ i.st-mature, .dot.st-mature { background: var(--st-mature); }
 .speak:hover { color: var(--accent-text); }
 
 /* kanji cards */
-.kanji-big { font-family: var(--font-jp); font-size: clamp(84px, 24vw, 132px); line-height: 1.15; font-weight: 500; }
+.kanji-big { font-family: var(--font-card); font-size: clamp(84px, 24vw, 132px); line-height: 1.15; font-weight: 500; }
 .readings { display: grid; gap: 4px; margin-top: 8px; font-family: var(--font-jp); font-size: 18px; text-align: left; }
 .readings > div { display: flex; gap: 10px; align-items: baseline; }
 .rd-label {
