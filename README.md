@@ -23,14 +23,18 @@ It runs on GitHub Pages, can be installed on a phone's home screen, works offlin
   - To keep requests low, changes are uploaded in batches: at most every 60 s, plus when a session ends or the app is left. Downloads are conditional (ETag), so a check where nothing changed is a cheap 304.
   - All progress changes must go through `setCard()` / `removeCard()` / `changed()` in `js/app.js`.
 - **Offline** (`sw.js`): network first, cache as fallback. When you add a new JS/CSS file, add it to `CORE`.
+- **Design** (`css/style.css`): "Taiji", a charcoal and cream yin-yang look with one red accent. It follows the system light/dark setting.
+  - All colours are variables at the top of the stylesheet. `--top` is the dark block behind the top of every view, `--primary` is for selected states and main buttons, and `--accent` is the red.
+  - **Font** (`fonts/`): [M PLUS Rounded 1c](https://fonts.google.com/specimen/M+PLUS+Rounded+1c) (SIL Open Font License, see `fonts/OFL.txt`), cut down to the characters the app uses. `node tools/font.js` rebuilds it; a character that is missing from it shows in the system font.
+  - **Logo:** the yin-yang tanuki. It is inline SVG in `index.html` (header and favicon), and `swift tools/icon.swift` draws the PNG icons in `icons/`.
 
 ## Adding a lesson
 
-Add `data/L12.js` in the same format as `data/L11.js`, add its `<script>` tag in `index.html`, update "Lessons" above, and push to `main`. See `CLAUDE.md` for converting the PDF lists.
+Add `data/L12.js` in the same format as `data/L11.js`, add its `<script>` tag in `index.html`, run `node tools/font.js`, update "Lessons" above, and push to `main`. See `CLAUDE.md` for converting the PDF lists.
 
 ## Adding a kanji list
 
-Add `data/K11-3.js` in the same format as `data/K10-1.js`, run `node tools/kanjivg.js`, add its `<script>` tag in `index.html` before `data/kanjivg.js`, update "Kanji" above, and push to `main`.
+Add `data/K11-3.js` in the same format as `data/K10-1.js`, run `node tools/kanjivg.js`, add its `<script>` tag in `index.html` before `data/kanjivg.js`, run `node tools/font.js`, update "Kanji" above, and push to `main`.
 
 ## Development
 
