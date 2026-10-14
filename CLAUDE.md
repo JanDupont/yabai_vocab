@@ -14,7 +14,7 @@ The user will post new `集中2AB_vocablist_Lxx.pdf` files. For each one:
 - Write `data/Lxx.js` with `registerLesson("Lxx", "Lesson xx", [...])`, then add its `<script>` tag to `index.html` before `js/srs.js`.
 - Check the total word count and the ★ count against the PDF.
 - Run `node tools/font.js`, so the app font contains the new kanji, and commit the changed `fonts/*.woff2`.
-- Never change the `jp` of existing entries. Card ids are `Lxx:jp`, and progress is keyed on them.
+- Never change the `jp` of existing entries without keeping the id. Card ids are `Lxx:<key || jp>`, and progress is keyed on them. When an updated list changes a `jp` (for example kana → kanji), set `key` to the old `jp`.
 - Update "Lessons included" in README.md.
 - Commit and push to `main`. GitHub Pages deploys it.
 
