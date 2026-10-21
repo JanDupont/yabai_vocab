@@ -4,7 +4,6 @@
   const STORE_KEY = "yabai_vocab.v1";
   const OLD_STORE_KEY = "tango.v1"; // before the rename
   const LEARN_AHEAD = 20 * SRS.MIN; // show learning cards early when nothing else is due
-  const PRACTICE_SIZE = 20;
   const DIR_LABEL = { je: "日本語 → EN", ej: "EN → 日本語", kr: "漢字 → Meaning", kw: "Meaning → 漢字" };
   // Two decks. Each has two card directions; the first one is learned first.
   const DECKS = {
@@ -242,7 +241,7 @@
     const total = q.learnDue.length + q.review.length + q.fresh.length;
     const eligible = eligibleCards().length;
     $("#btn-study").disabled = total === 0 && !(q.learn.length && store.cards[q.learn[0].id].due - Date.now() <= LEARN_AHEAD);
-    $("#btn-practice").disabled = eligible === 0;
+    $("#btn-practice").disabled = buildPractice().length === 0;
     let hint = "";
     if (eligible === 0) hint = "No cards match the current selection.";
     else if (total === 0) {
@@ -342,17 +341,9 @@
     next();
   }
 
-  // Practice: weakest seen cards first (lapses, low ease, short interval), topped up with random ones.
+  // Practice: every ★ word (vocab) or every kanji of the selected lessons, learned or not.
   function buildPractice() {
-    const cards = eligibleCards();
-    const weakness = (c) => {
-      const s = store.cards[c.id];
-      if (!s) return 0.5;
-      return s.lapses * 2 + (2.5 - s.ease) * 3 + (s.step >= 0 ? 2 : 0) + 1 / (1 + s.ivl);
-    };
-    const scored = cards.map((c) => ({ c, w: weakness(c) + Math.random() * 0.6 }));
-    scored.sort((a, b) => b.w - a.w);
-    return shuffle(scored.slice(0, PRACTICE_SIZE).map((x) => x.c));
+    return shuffle(eligibleCards({ ...store.filter, starOnly: true }));
   }
 
   function next() {

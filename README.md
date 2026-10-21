@@ -11,6 +11,7 @@ It runs on GitHub Pages, can be installed on a phone's home screen, works offlin
   - Each word has two cards, one per direction.
   - A day starts at 04:00, and intervals are capped at 180 days.
   - In "Both" mode, a new word's EN → 日本語 card starts the day after its 日本語 → EN card. Kanji are not delayed: the Write card is available right after the Recognise card.
+- **Extra practice** (for the days before a quiz): every ★ word (Vocab) or every kanji (Kanji) of the selected lessons, in the selected directions, learned or not, shuffled. It doesn't change the schedule.
 - **Data:** each lesson is a file `data/Lxx.js`, loaded with a `<script>` tag. Card ids are `Lxx:<jp>>je` / `>ej`, so changing a word's `jp` resets its progress. To change a `jp` (for example when a newer list writes it in kanji), set `key` to the old `jp` so the id stays the same.
 - **Kanji deck:** the home screen switches between the Vocab and the Kanji deck. Each deck has its own daily limit of new cards.
   - Each kanji list is a file `data/Kxx-y.js`. Each kanji has two cards: Recognise (kanji → meaning, KUN, ON) and Write (meaning and readings → draw it). The example words are only shown on the answer side.
